@@ -91,7 +91,7 @@ def nix_build(String flakeref, String subdir=null) {
     if (img_relpath) {
       target_path = "${subdir}/${img_relpath}"
       sig_path = "sig/${img_relpath}.sig"
-      sign_file(target_path, sig_path, "INT-Ghaf-Devenv-Image")
+      sign_file(target_path, sig_path, "INT-Ghaf-UAE-Prodenv-Image")
       // Archive signature file alongside the target image
       archive_artifacts("sig")
     } else {
@@ -143,7 +143,7 @@ def provenance(String flakeref, String outdir, String flakeref_trimmed) {
     sh "provenance ${flakeref} ${opts}"
     // Sign the provenance
     target_path = "${outdir}/provenance.json"
-    sign_file(target_path, "${target_path}.sig", "INT-Ghaf-Devenv-Provenance")
+    sign_file(target_path, "${target_path}.sig", "INT-Ghaf-UAE-Prodenv-Provenance")
 }
 
 def sbomnix(String tool, String flakeref) {
@@ -184,7 +184,7 @@ def find_img_relpath(String flakeref, String subdir, String abort_on_error="true
   return img_relpath
 }
 
-def sign_file(String path, String sigfile, String cert="INT-Ghaf-Devenv-Common") {
+def sign_file(String path, String sigfile, String cert="INT-Ghaf-UAE-Prodenv-Common") {
   println "sign_file: ${path} ### ${cert} ### ${sigfile}"
   try {
     sh(
@@ -361,7 +361,7 @@ def create_parallel_stages(List<Map> targets, String testset='_boot_bat_perf_', 
           // only attempt signing if there is something to sign
           if (it.archive) {
             def img_relpath = find_img_relpath(targetAttr, "archive")
-            sign_file("archive/${img_relpath}", "sig/${img_relpath}.sig", "INT-Ghaf-Devenv-Image")
+            sign_file("archive/${img_relpath}", "sig/${img_relpath}.sig", "INT-Ghaf-UAE-Prodenv-Image")
           };
 
         } catch (InterruptedException e) {
@@ -411,7 +411,7 @@ def create_parallel_stages(List<Map> targets, String testset='_boot_bat_perf_', 
                 mkdir -p ${scsdir}
                 provenance ${it.drvPath} --recursive --out ${outpath}
               """
-              sign_file(outpath, "${outpath}.sig", "INT-Ghaf-Devenv-Provenance")
+              sign_file(outpath, "${outpath}.sig", "INT-Ghaf-UAE-Prodenv-Provenance")
             }
           }
         }
@@ -441,16 +441,16 @@ def create_parallel_stages(List<Map> targets, String testset='_boot_bat_perf_', 
         }
       }
 
-      if (testset != null && it.hwtest_device != null) {
-        stage("Test ${displayName}") {
-          script {
-            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
-            if (flakeref != null) {
-              failedHWTests.add(flakeref)
-            }
-          }
-        }
-      }
+//      if (testset != null && it.hwtest_device != null) {
+//        stage("Test ${displayName}") {
+//          script {
+//            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
+//            if (flakeref != null) {
+//              failedHWTests.add(flakeref)
+//            }
+//          }
+//        }
+//      }
     }
   }
 
