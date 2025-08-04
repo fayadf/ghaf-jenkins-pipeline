@@ -185,13 +185,14 @@ def find_img_relpath(String flakeref, String subdir, String abort_on_error="true
 }
 
 def sign_file(String path, String sigfile, String cert="INT-Ghaf-UAE-Prodenv-Common") {
+  env.SIGN = sh(script: "nix run github:tiiuae/ci-yubi/produaen/#sign -- --help | grep Usage | awk '{print \$2}'", returnStdout: true).trim()
   println "sign_file: ${path} ### ${cert} ### ${sigfile}"
   try {
     sh(
       // See the 'sign' command at: https://github.com/tiiuae/ci-yubi
       script: """
         mkdir -p \$(dirname '${sigfile}') || true
-        sign --path=${path} --cert=${cert} --sigfile=${sigfile}
+        "${env.SIGN}" --path=${path} --cert=${cert} --sigfile=${sigfile}"
     """, returnStdout: true).trim()
   } catch (Exception e) {
     println "Warning: signing failed: sigfile will not be generated for: ${path}"
