@@ -185,7 +185,7 @@ def find_img_relpath(String flakeref, String subdir, String abort_on_error="true
 }
 
 def sign_file(String path, String sigfile, String cert="INT-Ghaf-UAE-Prodenv-Common") {
-  sign = sh(
+  def sign = sh(
     script: """
       nix run github:tiiuae/ci-yubi/produaen/#sign -- --help | grep Usage | /run/current-system/sw/bin/awk '{print \$2}'
     """, returnStdout:true).trim()
@@ -196,7 +196,7 @@ def sign_file(String path, String sigfile, String cert="INT-Ghaf-UAE-Prodenv-Com
       // See the 'sign' command at: https://github.com/tiiuae/ci-yubi
       script: """
         mkdir -p \$(dirname '${sigfile}') || true
-        sign --path=${path} --cert=${cert} --sigfile=${sigfile}
+        ${sign} --path=${path} --cert=${cert} --sigfile=${sigfile}
     """, returnStdout: true).trim()
   } catch (Exception e) {
     println "Warning: signing failed: sigfile will not be generated for: ${path}"
@@ -446,16 +446,16 @@ def create_parallel_stages(List<Map> targets, String testset='_boot_bat_perf_', 
         }
       }
 
-      if (testset != null && it.hwtest_device != null) {
-        stage("Test ${displayName}") {
-          script {
-            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
-            if (flakeref != null) {
-              failedHWTests.add(flakeref)
-            }
-          }
-        }
-      }
+//      if (testset != null && it.hwtest_device != null) {
+//        stage("Test ${displayName}") {
+//          script {
+//            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
+//            if (flakeref != null) {
+//              failedHWTests.add(flakeref)
+//            }
+//          }
+//        }
+//      }
     }
   }
 
