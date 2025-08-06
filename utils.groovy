@@ -187,8 +187,7 @@ def find_img_relpath(String flakeref, String subdir, String abort_on_error="true
 def sign_file(String path, String sigfile, String cert="INT-Ghaf-UAE-Prodenv-Common") {
   sign = sh(
     script: """
-      PATH = "${env.PATH}:/var/lib/jenkins/.nix-profile/bin:/run/current-system/sw/bin"
-      nix run github:tiiuae/ci-yubi/produaen/#sign -- --help | grep Usage | awk '{print \$2}'
+      nix run github:tiiuae/ci-yubi/produaen/#sign -- --help | grep Usage | /run/current-system/sw/bin/awk '{print \$2}'
     """, returnStdout:true).trim()
   println "sign command is ${sign}"
   println "sign_file: ${path} ### ${cert} ### ${sigfile}"
