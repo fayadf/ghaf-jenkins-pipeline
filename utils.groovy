@@ -446,16 +446,16 @@ def create_parallel_stages(List<Map> targets, String testset='_boot_bat_perf_', 
         }
       }
 
-//      if (testset != null && it.hwtest_device != null) {
-//        stage("Test ${displayName}") {
-//          script {
-//            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
-//            if (flakeref != null) {
-//              failedHWTests.add(flakeref)
-//            }
-//          }
-//        }
-//      }
+      if (testset != null && it.hwtest_device != null) {
+        stage("Test ${displayName}") {
+          script {
+            flakeref = ghaf_hw_test(targetAttr, it.hwtest_device, testset)
+            if (flakeref != null) {
+              failedHWTests.add(flakeref)
+            }
+          }
+        }
+      }
     }
   }
 
